@@ -1,38 +1,57 @@
 import { useState } from 'react'
+import Filter from './Filter'
+import PersonForm from './PersonForm'
+import Persons from './Persons'
 
 const App = () => {
   const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', id : 1 }
-  ]) 
+    { name: 'Arto Hellas', phoneNumber: '040-123456', id: 1 },
+    { name: 'Ada Lovelace', phoneNumber: '39-44-5323523', id: 2 },
+    { name: 'Dan Abramov', phoneNumber: '12-43-234345', id: 3 },
+    { name: 'Mary Poppendieck', phoneNumber: '39-23-6423122', id: 4 }
+  ])
   const [newName, setNewName] = useState('')
+  const [newNumber, setNewNumber] = useState('')
+  const [filterRule, setFilterRule] = useState('')
 
   const handleSubmitNewPerson = (e) => {
     e.preventDefault()
-    console.log(persons)
-    setPersons(persons.concat({name: newName, id: persons.length + 1}))
+
+    let newPerson = {name: newName, id: persons.length + 1, phoneNumber: newNumber};
+    let names = persons.map(person => person.name.toLowerCase());
+
+    if (names.includes(newPerson.name.toLowerCase())) {
+      alert(`${newPerson.name} is already added to phonebook`);
+    } else {
+      setPersons(persons.concat(newPerson));
+    }
+
     setNewName('')
+    setNewNumber('')
   }
 
-  const handleInputChange = (e) => {
-    console.log(e.target.value);
+  const handleNameInputChange = (e) => {
     setNewName(e.target.value)
+  }  
+  
+  const handlePhoneInputChange = (e) => {
+    setNewNumber(e.target.value)
   }
+
+  const handleFiltering = (e) => {
+    setFilterRule(e.target.value)
+  }
+
+  let personsToShow = filterRule === '' ? persons : persons.filter(person => person.name.toLowerCase().includes(filterRule.toLowerCase()));
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <form onSubmit={handleSubmitNewPerson}>
-        <div>
-          name: <input value={newName} onChange={handleInputChange}/>
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <Filter filterRule={filterRule} handleFiltering={handleFiltering}/>
+      <h3>Add new</h3>
+      <PersonForm handleNameInputChange={handleNameInputChange} newName={newName} newNumber={newNumber} handlePhoneInputChange={handlePhoneInputChange} handleSubmitNewPerson={handleSubmitNewPerson}/>
       <h2>Numbers</h2>
-      {persons.map(person => {
-        return <div key = {person.id}>{person.name}</div>
-      })}
+      <Persons personsToShow={personsToShow}/>
     </div>
   )
 }
