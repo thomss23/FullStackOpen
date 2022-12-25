@@ -28,11 +28,14 @@ const App = () => {
     if (names.includes(newPerson.name.toLowerCase())) {
       alert(`${newPerson.name} is already added to phonebook`);
     } else {
-      setPersons(persons.concat(newPerson));
+      axios
+        .post('http://localhost:3001/persons', newPerson)
+        .then(response => {
+          setPersons(persons.concat(response.data));
+        })
+      setNewName('')
+      setNewNumber('')
     }
-
-    setNewName('')
-    setNewNumber('')
   }
 
   const handleNameInputChange = (e) => {
@@ -56,7 +59,7 @@ const App = () => {
       <h3>Add new</h3>
       <PersonForm handleNameInputChange={handleNameInputChange} newName={newName} newNumber={newNumber} handlePhoneInputChange={handlePhoneInputChange} handleSubmitNewPerson={handleSubmitNewPerson}/>
       <h2>Numbers</h2>
-      <Persons personsToShow={personsToShow}/>
+      <Persons personsToShow={personsToShow} setPersons={setPersons} persons={persons}/>
     </div>
   )
 }
