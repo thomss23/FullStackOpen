@@ -22,12 +22,23 @@ const App = () => {
   const handleSubmitNewPerson = (e) => {
     e.preventDefault()
 
-    let newPerson = {name: newName, id: persons.length + 1, phoneNumber: newNumber};
     let names = persons.map(person => person.name.toLowerCase());
+  
+    if (names.includes(newName.toLowerCase())) {
 
-    if (names.includes(newPerson.name.toLowerCase())) {
-      alert(`${newPerson.name} is already added to phonebook`);
+      if(window.confirm(newName + "Is already present in the phonebook. Do you wish to change their number?")) {
+        const person = persons.find(p => p.name === newName)
+        const url = `http://localhost:3001/persons/${person.id}`
+        const changedPerson = { ...person, phoneNumber: newNumber }
+        
+        axios.put(url, changedPerson).then(response => {
+          setPersons(persons.map(p => p.id !== changedPerson.id ? p : response.data))
+        })
+      }
+
     } else {
+      let newPerson = {name: newName, id: persons.length + 1, phoneNumber: newNumber};
+
       axios
         .post('http://localhost:3001/persons', newPerson)
         .then(response => {
