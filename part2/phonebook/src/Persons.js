@@ -1,6 +1,6 @@
 import axios from "axios"
 
-const Persons = ({personsToShow, setPersons, persons}) => {
+const Persons = ({personsToShow, setPersons, persons, setErrorMessage}) => {
 
     const deletePerson = (id) => {
         const url = `http://localhost:3001/persons/${id}`
@@ -11,6 +11,12 @@ const Persons = ({personsToShow, setPersons, persons}) => {
             .delete(url, personToBeDeleted)
             .then(() => {
                 setPersons(persons.filter(person => person.id !== personToBeDeleted.id));
+            })
+            .catch(error => {
+                setErrorMessage(`Information of ${personToBeDeleted.name} was already deleted from the server`)
+                setTimeout(() => {
+                    setErrorMessage(null)
+                }, 5000)
             })
         }
     }

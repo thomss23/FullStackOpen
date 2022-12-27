@@ -4,12 +4,17 @@ import Filter from './Filter'
 import PersonForm from './PersonForm'
 import Persons from './Persons'
 import axios from 'axios'
+import Notification from './Notification'
+import './index.css'
+import ErrorNotification from './ErrorNotification'
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterRule, setFilterRule] = useState('')
+  const [notificationMessage, setNotificationMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => {
     axios
@@ -43,6 +48,10 @@ const App = () => {
         .post('http://localhost:3001/persons', newPerson)
         .then(response => {
           setPersons(persons.concat(response.data));
+          setNotificationMessage(`${newPerson.name} was added`)
+          setTimeout(() => {
+            setNotificationMessage(null)
+          }, 5000)
         })
       setNewName('')
       setNewNumber('')
@@ -66,11 +75,13 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={notificationMessage}/>
+      <ErrorNotification message={errorMessage}/>
       <Filter filterRule={filterRule} handleFiltering={handleFiltering}/>
       <h3>Add new</h3>
       <PersonForm handleNameInputChange={handleNameInputChange} newName={newName} newNumber={newNumber} handlePhoneInputChange={handlePhoneInputChange} handleSubmitNewPerson={handleSubmitNewPerson}/>
       <h2>Numbers</h2>
-      <Persons personsToShow={personsToShow} setPersons={setPersons} persons={persons}/>
+      <Persons personsToShow={personsToShow} setPersons={setPersons} persons={persons} setErrorMessage={setErrorMessage}/>
     </div>
   )
 }
