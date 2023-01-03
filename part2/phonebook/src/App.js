@@ -18,7 +18,7 @@ const App = () => {
 
   useEffect(() => {
     axios
-      .get('http://localhost:3001/persons')
+      .get('/api/persons')
       .then(response => {
         setPersons(response.data)
       })
@@ -32,9 +32,9 @@ const App = () => {
     if (names.includes(newName.toLowerCase())) {
 
       if(window.confirm(newName + "Is already present in the phonebook. Do you wish to change their number?")) {
-        const person = persons.find(p => p.name === newName)
-        const url = `http://localhost:3001/persons/${person.id}`
-        const changedPerson = { ...person, phoneNumber: newNumber }
+        const person = persons.find(p => p.name.toLowerCase() === newName.toLowerCase())
+        const url = `/api/persons/${person.id}`
+        const changedPerson = { ...person, number: newNumber }
         
         axios.put(url, changedPerson).then(response => {
           setPersons(persons.map(p => p.id !== changedPerson.id ? p : response.data))
@@ -42,10 +42,10 @@ const App = () => {
       }
 
     } else {
-      let newPerson = {name: newName, id: persons.length + 1, phoneNumber: newNumber};
+      let newPerson = {name: newName, id: persons.length + 1, number: newNumber};
 
       axios
-        .post('http://localhost:3001/persons', newPerson)
+        .post('/api/persons', newPerson)
         .then(response => {
           setPersons(persons.concat(response.data));
           setNotificationMessage(`${newPerson.name} was added`)

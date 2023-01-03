@@ -3,7 +3,7 @@ import axios from "axios"
 const Persons = ({personsToShow, setPersons, persons, setErrorMessage}) => {
 
     const deletePerson = (id) => {
-        const url = `http://localhost:3001/persons/${id}`
+        const url = `/api/persons/${id}`
         const personToBeDeleted = personsToShow.find(person => person.id === id)
         
         if (window.confirm("Are you sure you wish to delete " + personToBeDeleted.name)) {
@@ -25,7 +25,7 @@ const Persons = ({personsToShow, setPersons, persons, setErrorMessage}) => {
        {personsToShow.map(person => {
         return (
             <div key={person.id}>
-                <div style={{float:"left"}}>{person.name} {person.phoneNumber}</div>
+                <div style={{float:"left"}}>{person.name} {person.number}</div>
                 <button onClick={() => deletePerson(person.id)} style={{marginLeft:"5px"}}>delete</button>
             </div>
         )
